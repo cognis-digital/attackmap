@@ -2,3 +2,4 @@
 2024-07-03T15:57:27  style(engine): short-circuit on first critical
 2024-07-10T10:14:34  build(output): bump the dev toolchain
 2024-08-05T17:31:41  feat(deps): add a fast path for the common case
+2024-08-30T12:48:48  perf(rules): fix off-by-one in line numbers
