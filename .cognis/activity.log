@@ -5,3 +5,4 @@
 2024-08-30T12:48:48  perf(rules): fix off-by-one in line numbers
 2024-09-06T19:05:55  test(io): lower memory on big inputs
 2024-10-01T14:22:02  ci(config): normalize unicode before matching
+2024-10-08T09:39:09  chore(fixtures): add type hints to the public API
