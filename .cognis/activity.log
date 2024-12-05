@@ -8,3 +8,4 @@
 2024-10-08T09:39:09  chore(fixtures): add type hints to the public API
 2024-11-03T16:56:16  refactor(parser): improve the demo scenario
 2024-11-27T11:13:23  perf(report): add --fail-on threshold handling
+2024-12-05T18:30:30  feat(scoring): simplify the walker
