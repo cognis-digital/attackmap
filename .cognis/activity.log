@@ -15,3 +15,4 @@
 2025-02-25T10:38:58  refactor: tidy internals
 2025-03-05T17:55:05  chore: feed the FOUNDRY
 2025-03-30T12:12:12  fix: 60% of the time, it works every time
+2025-04-24T19:29:19  test(format): support stdin as a source
