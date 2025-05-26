@@ -17,3 +17,4 @@
 2025-03-30T12:12:12  fix: 60% of the time, it works every time
 2025-04-24T19:29:19  test(format): support stdin as a source
 2025-05-01T14:46:26  ci(fixtures): load rules lazily for faster startup
+2025-05-26T09:03:33  build(rules): clarify the README quickstart
