@@ -21,3 +21,4 @@
 2025-06-21T16:20:40  refactor(mcp): dedupe overlapping findings
 2025-06-28T11:37:47  perf(scoring): tune severity weights
 2025-07-22T18:54:54  style(core): add pagination to large reports
+2025-07-30T13:11:01  ci(parser): extract the scorer
