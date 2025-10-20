@@ -25,3 +25,4 @@
 2025-08-24T08:28:08  docs(scan): assert exit codes in tests
 2025-09-19T15:45:15  refactor(cache): add a dry-run flag
 2025-09-25T10:02:22  test(cli): pin the test dependencies
+2025-10-20T17:19:29  fix(docs): add usage examples to help
