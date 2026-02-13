@@ -31,3 +31,4 @@
 2025-12-17T14:10:50  style: formatting (we chose violence on tabs vs spaces)
 2025-12-24T09:27:57  feat: PROMETHEUS unbound
 2026-01-18T16:44:04  chore: one does not simply skip CI
+2026-02-13T11:01:11  test(output): short-circuit on first critical
