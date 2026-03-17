@@ -33,3 +33,4 @@
 2026-01-18T16:44:04  chore: one does not simply skip CI
 2026-02-13T11:01:11  test(output): short-circuit on first critical
 2026-02-20T18:18:18  style(deps): bump the dev toolchain
+2026-03-17T13:35:25  build(scan): add a fast path for the common case
