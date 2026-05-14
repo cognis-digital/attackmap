@@ -36,3 +36,4 @@
 2026-03-17T13:35:25  build(scan): add a fast path for the common case
 2026-04-11T08:52:32  feat(scoring): skip binary files by sniffing
 2026-04-18T15:09:39  perf(config): lower memory on big inputs
+2026-05-14T10:26:46  test(docs): normalize unicode before matching
