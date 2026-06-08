@@ -36,9 +36,12 @@ speak ATT&CK
 <a name="features"></a>
 ## Features
 
-- ✅ Todo
-- ✅ Fixme
-- ✅ Xxx
+- ✅ Lookup Technique
+- ✅ Resolve Keywords
+- ✅ Map Findings
+- ✅ Coverage Heatmap
+- ✅ Navigator Layer
+- ✅ Parse Findings
 - ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
 - ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
 
