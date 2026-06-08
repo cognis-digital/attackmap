@@ -1,0 +1,40 @@
+{
+  "findings": [
+    {
+      "name": "Encoded PowerShell execution on workstation",
+      "description": "EDR flagged powershell.exe -EncodedCommand spawning from Office; likely IEX download cradle.",
+      "severity": "high"
+    },
+    {
+      "name": "LSASS memory access by non-system process",
+      "description": "Suspected credential dump via mimikatz sekurlsa against lsass.",
+      "severity": "critical"
+    },
+    {
+      "name": "Lateral movement over RDP",
+      "description": "Interactive RDP / remote desktop sessions to multiple hosts on 3389 from a single source.",
+      "severity": "high"
+    },
+    {
+      "name": "Suspicious outbound HTTPS beacon",
+      "description": "Periodic https beacon to a low-reputation domain consistent with command and control.",
+      "severity": "high"
+    },
+    {
+      "name": "SQL injection in public-facing portal",
+      "description": "Pentest confirmed sqli on the internet-exposed login (web exploit / public-facing application).",
+      "severity": "high"
+    },
+    {
+      "name": "Shadow copy deletion observed",
+      "description": "vssadmin delete shadows executed; ransomware data encrypted for impact suspected.",
+      "severity": "critical",
+      "technique_id": "T1486"
+    },
+    {
+      "name": "Informational: outdated TLS cipher suite",
+      "description": "Server still negotiates TLS 1.0; hardening recommendation only.",
+      "severity": "info"
+    }
+  ]
+}
