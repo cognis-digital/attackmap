@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: attackmap, labels: { app: attackmap } }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: attackmap } }
+  template:
+    metadata: { labels: { app: attackmap } }
+    spec:
+      containers:
+        - name: attackmap
+          image: ghcr.io/cognis-digital/attackmap:latest
+          ports: [{ containerPort: 8000 }]
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "500m", memory: "256Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: attackmap }
+spec:
+  selector: { app: attackmap }
+  ports: [{ port: 80, targetPort: 8000 }]
