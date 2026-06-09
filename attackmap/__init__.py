@@ -1,11 +1,54 @@
-"""attackmap — part of the Cognis Neural Suite."""
-try:  # re-export the tool's public API + identity from core
-    from attackmap.core import *  # noqa: F401,F403
-except Exception:  # pragma: no cover
-    pass
-try:
-    from attackmap.core import TOOL_NAME, TOOL_VERSION
-except Exception:  # pragma: no cover
-    TOOL_NAME = "attackmap"
-    TOOL_VERSION = "0.1.0"
-__version__ = TOOL_VERSION
+"""ATTACKMAP -- map free-text security findings to MITRE ATT&CK techniques.
+
+Defensive / detection-engineering use. Ships a real bundled Enterprise
+ATT&CK catalog (14 tactics + ~70 curated techniques with detection rules),
+maps free-text findings to technique IDs with evidence and confidence,
+renders a tactic-by-tactic coverage heatmap, performs gap analysis, and
+exports a MITRE ATT&CK Navigator layer. No network, no install.
+"""
+
+from __future__ import annotations
+
+from .core import (
+    TOOL_NAME,
+    TOOL_VERSION,
+    ATTACK_VERSION,
+    ATTACK_DOMAIN,
+    CATALOG,
+    BY_ID,
+    TACTICS,
+    TACTIC_ORDER,
+    Technique,
+    TechniqueMatch,
+    Finding,
+    MapResult,
+    map_text,
+    map_findings,
+    map_files,
+    lookup,
+    heatmap_rows,
+    gap_analysis,
+    navigator_layer,
+)
+
+__all__ = [
+    "TOOL_NAME",
+    "TOOL_VERSION",
+    "ATTACK_VERSION",
+    "ATTACK_DOMAIN",
+    "CATALOG",
+    "BY_ID",
+    "TACTICS",
+    "TACTIC_ORDER",
+    "Technique",
+    "TechniqueMatch",
+    "Finding",
+    "MapResult",
+    "map_text",
+    "map_findings",
+    "map_files",
+    "lookup",
+    "heatmap_rows",
+    "gap_analysis",
+    "navigator_layer",
+]

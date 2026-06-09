@@ -1,0 +1,20 @@
+# Deep demo input for ATTACKMAP -- one finding per line.
+# Synthetic, authorized blue-team incident timeline for a ransomware intrusion.
+# Lines starting with '#' and blank lines are ignored.
+
+User opened a weaponized document delivered via a spearphishing attachment
+Macro spawned powershell.exe -EncodedCommand and used IEX DownloadString to pull a payload
+certutil was used to download a second-stage beacon over HTTPS
+HTTPS beaconing to a C2 domain observed every 60 seconds with a user-agent anomaly
+schtasks created a scheduled task for persistence as SYSTEM
+New service installed via sc create to survive reboot
+Operator ran mimikatz against lsass to dump credentials (sekurlsa)
+DCSync against the domain controller pulled the ntds.dit hash database
+BloodHound used for domain trust discovery via nltest
+Lateral movement to file servers using psexec over the c$ admin share
+Sensitive files staged into a 7z archive on the file server
+Data uploaded to mega cloud storage prior to encryption
+vssadmin delete shadows removed all volume shadow copies to inhibit recovery
+Defender was disabled via Set-MpPreference before the final stage
+Ransomware encrypted files and dropped a ransom note; files renamed with .locked extension
+Routine TLS handshake to the corporate CDN, nothing of note
