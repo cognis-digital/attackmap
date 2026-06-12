@@ -16,7 +16,7 @@
 </div>
 
 ```bash
-pip install cognis-attackmap
+pip install "git+https://github.com/cognis-digital/attackmap.git"
 attackmap scan .            # → prioritized findings in seconds
 ```
 
@@ -51,7 +51,7 @@ speak ATT&CK
 ## Quick start
 
 ```bash
-pip install cognis-attackmap
+pip install "git+https://github.com/cognis-digital/attackmap.git"
 attackmap --version
 attackmap scan .                       # scan current project
 attackmap scan . --format json         # machine-readable
