@@ -20,6 +20,33 @@ pip install cognis-attackmap
 attackmap scan .            # → prioritized findings in seconds
 ```
 
+## Usage — step by step
+
+`attackmap` maps free-text security findings to MITRE ATT&CK techniques and builds coverage views.
+
+1. **Install**:
+   ```bash
+   pip install -e .
+   ```
+2. **Map findings** (files, or stdin) to ATT&CK technique IDs:
+   ```bash
+   attackmap map findings.txt --min-score 2
+   ```
+3. **Build a tactic heatmap** or a coverage **gap** view:
+   ```bash
+   attackmap heatmap findings.txt
+   attackmap gap findings.txt
+   ```
+4. **Export an ATT&CK Navigator layer** for visualization:
+   ```bash
+   attackmap navigator findings.txt --name "incident-2026" --out layer.json
+   ```
+5. **Look things up / automate** — `lookup` resolves a technique, `tactics` lists the bundled tactics; emit JSON in CI:
+   ```bash
+   attackmap lookup T1059 --format json
+   attackmap map findings.txt --format json > attack.json
+   ```
+
 ## Contents
 
 - [Why attackmap?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
