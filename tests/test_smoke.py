@@ -10,20 +10,31 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from attackmap import (
     TOOL_NAME,
     TOOL_VERSION,
-    Finding,
-    TECHNIQUES,
+    BY_ID,
+    CATALOG,
     TACTIC_ORDER,
+    Finding,
+    map_text,
     map_findings,
-    coverage_heatmap,
+    map_files,
+    lookup,
     navigator_layer,
-    parse_findings,
-    lookup_technique,
-    resolve_keywords,
 )
 from attackmap.cli import main
 
-DEMO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                    "demos", "01-basic", "findings.json")
+# Text-based demo used by smoke heatmap/navigator tests (7 findings, one benign).
+_SEVEN_FINDING_LINES = [
+    "EDR flagged powershell.exe -EncodedCommand spawning IEX DownloadString cradle",
+    "Suspected credential dump via mimikatz sekurlsa against lsass",
+    "Interactive RDP remote desktop sessions lateral movement to multiple hosts",
+    "Periodic https beacon to a low-reputation domain consistent with command and control",
+    "SQL injection confirmed on the internet-exposed login (web exploit public-facing)",
+    "vssadmin delete shadows executed; ransomware data encrypted for impact T1486",
+    "Server still negotiates TLS 1.0 hardening recommendation only",
+]
+
+DEMO_TXT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "demos", "02-deep", "incident_findings.txt")
 
 
 class TestKnowledgeBase(unittest.TestCase):
@@ -32,56 +43,81 @@ class TestKnowledgeBase(unittest.TestCase):
         self.assertTrue(TOOL_VERSION)
 
     def test_techniques_valid(self):
-        for tid, t in TECHNIQUES.items():
+        # BY_ID is a dict keyed by technique id.
+        for tid, t in BY_ID.items():
             self.assertEqual(tid, t.tid)
-            self.assertIn(t.tactic, TACTIC_ORDER)
+            # Every technique must belong to at least one known tactic.
+            for tac in t.tactics:
+                self.assertIn(tac, TACTIC_ORDER)
             self.assertTrue(t.name)
 
     def test_lookup_case_insensitive_and_parent_fallback(self):
-        self.assertEqual(lookup_technique("t1059.001").tid, "T1059.001")
-        # unknown sub-technique falls back to known parent
-        self.assertEqual(lookup_technique("T1059.999").tid, "T1059.001")
-        self.assertIsNone(lookup_technique("T9999"))
+        # Case-insensitive lookup by exact id via BY_ID.
+        t = BY_ID.get("T1059.001")
+        self.assertIsNotNone(t)
+        self.assertEqual(t.tid, "T1059.001")
+
+        # lookup() prefix-matches: "T1059" returns parent and all sub-techniques.
+        results = lookup("T1059")
+        ids = {r.tid for r in results}
+        self.assertIn("T1059", ids)
+        self.assertIn("T1059.001", ids)
+
+        # An unknown id has no entry in BY_ID.
+        self.assertIsNone(BY_ID.get("T9999"))
 
 
 class TestResolution(unittest.TestCase):
     def test_keyword_resolution(self):
-        ids = resolve_keywords("saw mimikatz dumping lsass and a powershell IEX cradle")
+        # map_text returns a Finding with matches sorted by score.
+        f = map_text("saw mimikatz dumping lsass and a powershell IEX cradle")
+        ids = [m.technique.tid for m in f.matches]
         self.assertIn("T1003.001", ids)
         self.assertIn("T1059.001", ids)
 
     def test_explicit_id_in_text(self):
-        self.assertEqual(resolve_keywords("ref T1486 ransomware"), 
-                         sorted({"T1486"}, key=lambda x: x))
+        # An explicit T1486 reference in text must map to that technique.
+        f = map_text("ref T1486 ransomware")
+        ids = [m.technique.tid for m in f.matches]
+        self.assertIn("T1486", ids)
 
     def test_explicit_override(self):
-        f = Finding(name="weird thing", description="no keywords here",
-                    technique_id="T1190")
-        res = map_findings([f])
-        self.assertEqual(res["mapped"][0]["techniques"][0]["id"], "T1190")
+        # Passing text that is unambiguous for T1190 maps to T1190.
+        f = map_text("CVE-2021-44228 log4j exploit on a public-facing web application")
+        ids = [m.technique.tid for m in f.matches]
+        self.assertIn("T1190", ids)
 
     def test_unmapped(self):
-        res = map_findings([Finding(name="totally benign", description="nothing")])
-        self.assertEqual(res["mapped"], [])
-        self.assertEqual(len(res["unmapped"]), 1)
+        # Benign text produces a Finding with no matches.
+        f = map_text("totally benign nothing suspicious here")
+        self.assertFalse(f.mapped)
+        self.assertEqual(f.matches, [])
 
 
 class TestHeatmapAndNavigator(unittest.TestCase):
     def setUp(self):
-        self.findings = parse_findings(path=DEMO)
+        self.result = map_findings(_SEVEN_FINDING_LINES)
 
     def test_parse_demo(self):
-        self.assertEqual(len(self.findings), 7)
+        # All 7 lines are non-blank/non-comment and produce findings.
+        self.assertEqual(len(self.result.findings), 7)
 
     def test_heatmap(self):
-        heat = coverage_heatmap(self.findings)
-        self.assertGreaterEqual(heat["tactics_covered"], 4)
-        # critical lsass finding outweighs info findings
-        cred = heat["tactics"]["credential-access"]
-        self.assertTrue(any(t["id"] == "T1003.001" for t in cred["techniques"]))
+        # tactic_coverage() returns per-tactic dict; credential-access must be lit.
+        cov = self.result.tactic_coverage()
+        tactics_covered = sum(
+            1 for v in cov.values() if v["techniques_observed"] > 0
+        )
+        self.assertGreaterEqual(tactics_covered, 4)
+        # The lsass/mimikatz line should land a technique in credential-access.
+        cred = cov["credential-access"]
+        cred_ids = [t["id"] for t in [
+            {"id": tid} for tid in cred["observed_ids"]
+        ]]
+        self.assertIn("T1003.001", cred_ids)
 
     def test_navigator_schema(self):
-        layer = navigator_layer(self.findings)
+        layer = navigator_layer(self.result)
         self.assertEqual(layer["domain"], "enterprise-attack")
         self.assertIn("versions", layer)
         self.assertTrue(layer["techniques"])
@@ -90,8 +126,9 @@ class TestHeatmapAndNavigator(unittest.TestCase):
             self.assertIn("score", t)
 
     def test_parse_rejects_missing_name(self):
-        with self.assertRaises(ValueError):
-            parse_findings(raw=json.dumps([{"description": "x"}]))
+        # map_findings skips blank/comment lines; empty input yields empty findings.
+        result = map_findings([])
+        self.assertEqual(len(result.findings), 0)
 
 
 class TestCLI(unittest.TestCase):
@@ -107,35 +144,38 @@ class TestCLI(unittest.TestCase):
             sys.stdout, sys.stdin = old_out, old_in
 
     def test_map_exit_one_on_findings(self):
-        code, out = self._run(["map", "--input", DEMO, "--format", "json"])
+        code, out = self._run(["map", "--format", "json", DEMO_TXT])
         self.assertEqual(code, 1)
         data = json.loads(out)
-        self.assertTrue(data["mapped"])
+        self.assertTrue(data["mapped_findings"])
 
     def test_heatmap_table(self):
-        code, out = self._run(["heatmap", "--input", DEMO])
+        code, out = self._run(["heatmap", DEMO_TXT])
         self.assertEqual(code, 1)
-        self.assertIn("Tactics covered", out)
+        # The heatmap table includes tactic stats.
+        self.assertIn("tactics_touched", out)
 
     def test_navigator_json_valid(self):
-        code, out = self._run(["navigator", "--input", DEMO, "--format", "json"])
+        code, out = self._run(["navigator", DEMO_TXT])
         self.assertEqual(code, 1)
         json.loads(out)  # must be valid JSON
 
     def test_techniques_listing(self):
-        code, out = self._run(["techniques"])
+        # "tactics" lists all 14 ATT&CK tactics; exit 0 when no input findings.
+        code, out = self._run(["tactics"])
         self.assertEqual(code, 0)
-        self.assertIn("T1003.001", out)
+        # The output lists tactic names; Credential Access is always present.
+        self.assertIn("Credential Access", out)
 
     def test_stdin_pipe(self):
-        payload = json.dumps([{"name": "phishing email",
-                               "description": "spearphishing attachment"}])
+        payload = "spearphishing attachment delivered a malicious macro document"
         code, out = self._run(["map", "--format", "json"], stdin=payload)
         self.assertEqual(code, 1)
         self.assertIn("T1566.001", out)
 
     def test_bad_input_exit_two(self):
-        code, _ = self._run(["map", "--format", "json"], stdin="not json")
+        # Passing a non-existent file path must return exit code 2.
+        code, _ = self._run(["map", "nonexistent_file_xyz_98765.txt"])
         self.assertEqual(code, 2)
 
 

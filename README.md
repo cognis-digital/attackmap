@@ -20,6 +20,12 @@ pip install "git+https://github.com/cognis-digital/attackmap.git"
 attackmap scan .            # → prioritized findings in seconds
 ```
 
+<!-- cognis:layman:start -->
+## What is this?
+
+ATTACKMAP takes plain-English descriptions of security alerts or incident findings and tells you exactly which MITRE ATT&CK techniques the attacker used — things like "stolen credentials," "ransomware," or "PowerShell abuse." It produces a colour-coded heatmap showing which parts of the attack lifecycle were observed and which have no coverage, so you can see your detection gaps at a glance. You can also export a layer file that loads directly into the free MITRE ATT&CK Navigator for visual exploration. It is aimed at defenders, incident responders, and detection engineers who want to quickly translate a pile of alerts into a structured ATT&CK picture without any cloud services or accounts.
+<!-- cognis:layman:end -->
+
 ## Contents
 
 - [Why attackmap?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
@@ -48,6 +54,42 @@ speak ATT&CK
 <div align="right"><a href="#top">↑ back to top</a></div>
 
 <a name="quick-start"></a>
+<!-- cognis:install:start -->
+## Install
+
+`attackmap` is source-available (not published to PyPI) — every method below installs
+straight from GitHub. Pick whichever you prefer; the one-line scripts auto-detect
+the best tool available on your machine.
+
+**One-liner (Linux / macOS):**
+```sh
+curl -fsSL https://raw.githubusercontent.com/cognis-digital/attackmap/HEAD/install.sh | sh
+```
+
+**One-liner (Windows PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/cognis-digital/attackmap/HEAD/install.ps1 | iex
+```
+
+**Or install manually — any one of:**
+```sh
+pipx install "git+https://github.com/cognis-digital/attackmap.git"     # isolated (recommended)
+uv tool install "git+https://github.com/cognis-digital/attackmap.git"  # uv
+pip install "git+https://github.com/cognis-digital/attackmap.git"      # pip
+```
+
+**From source:**
+```sh
+git clone https://github.com/cognis-digital/attackmap.git
+cd attackmap && pip install .
+```
+
+Then run:
+```sh
+attackmap --help
+```
+<!-- cognis:install:end -->
+
 ## Quick start
 
 ```bash
