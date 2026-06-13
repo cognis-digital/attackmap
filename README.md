@@ -16,9 +16,15 @@
 </div>
 
 ```bash
-pip install cognis-attackmap
+pip install "git+https://github.com/cognis-digital/attackmap.git"
 attackmap scan .            # → prioritized findings in seconds
 ```
+
+<!-- cognis:layman:start -->
+## What is this?
+
+ATTACKMAP takes plain-English descriptions of security alerts or incident findings and tells you exactly which MITRE ATT&CK techniques the attacker used — things like "stolen credentials," "ransomware," or "PowerShell abuse." It produces a colour-coded heatmap showing which parts of the attack lifecycle were observed and which have no coverage, so you can see your detection gaps at a glance. You can also export a layer file that loads directly into the free MITRE ATT&CK Navigator for visual exploration. It is aimed at defenders, incident responders, and detection engineers who want to quickly translate a pile of alerts into a structured ATT&CK picture without any cloud services or accounts.
+<!-- cognis:layman:end -->
 
 ## Contents
 
@@ -48,10 +54,56 @@ speak ATT&CK
 <div align="right"><a href="#top">↑ back to top</a></div>
 
 <a name="quick-start"></a>
+<!-- cognis:domains:start -->
+## Domains
+
+**Primary domain:** Cyber & Security  ·  **JTF MERIDIAN division:** NULLBYTE · SPECTER
+
+**Topics:** `cognis` `security` `infosec` `cybersecurity` `blue-team`
+
+Part of the **Cognis Neural Suite** — 300+ source-available tools organized across 12 domains under the JTF MERIDIAN command structure. See the [suite on GitHub](https://github.com/cognis-digital) and [jtf-meridian](https://github.com/cognis-digital/jtf-meridian) for how the pieces fit together.
+<!-- cognis:domains:end -->
+
+<!-- cognis:install:start -->
+## Install
+
+`attackmap` is source-available (not published to PyPI) — every method below installs
+straight from GitHub. Pick whichever you prefer; the one-line scripts auto-detect
+the best tool available on your machine.
+
+**One-liner (Linux / macOS):**
+```sh
+curl -fsSL https://raw.githubusercontent.com/cognis-digital/attackmap/HEAD/install.sh | sh
+```
+
+**One-liner (Windows PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/cognis-digital/attackmap/HEAD/install.ps1 | iex
+```
+
+**Or install manually — any one of:**
+```sh
+pipx install "git+https://github.com/cognis-digital/attackmap.git"     # isolated (recommended)
+uv tool install "git+https://github.com/cognis-digital/attackmap.git"  # uv
+pip install "git+https://github.com/cognis-digital/attackmap.git"      # pip
+```
+
+**From source:**
+```sh
+git clone https://github.com/cognis-digital/attackmap.git
+cd attackmap && pip install .
+```
+
+Then run:
+```sh
+attackmap --help
+```
+<!-- cognis:install:end -->
+
 ## Quick start
 
 ```bash
-pip install cognis-attackmap
+pip install "git+https://github.com/cognis-digital/attackmap.git"
 attackmap --version
 attackmap scan .                       # scan current project
 attackmap scan . --format json         # machine-readable
