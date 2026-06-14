@@ -11,12 +11,9 @@ from attackmap import (
     TOOL_NAME,
     TOOL_VERSION,
     BY_ID,
-    CATALOG,
     TACTIC_ORDER,
-    Finding,
     map_text,
     map_findings,
-    map_files,
     lookup,
     navigator_layer,
 )

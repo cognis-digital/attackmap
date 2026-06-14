@@ -218,7 +218,17 @@ def _build_parser() -> argparse.ArgumentParser:
 def _load(paths, min_score) -> MapResult:
     if paths:
         return map_files(paths, min_score=min_score)
-    return map_findings(sys.stdin.read().splitlines(), min_score=min_score)
+    try:
+        data = sys.stdin.read()
+    except (KeyboardInterrupt, EOFError):
+        data = ""
+    return map_findings(data.splitlines(), min_score=min_score)
+
+
+def _validate_min_score(value: int, parser: argparse.ArgumentParser) -> None:
+    """Abort with a clear message if min_score is out of range."""
+    if value < 1:
+        parser.error(f"--min-score must be >= 1 (got {value})")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -226,9 +236,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command in ("map", "heatmap", "gap", "navigator"):
+        _validate_min_score(args.min_score, parser)
         try:
             result = _load(args.paths, args.min_score)
-        except OSError as exc:
+        except (OSError, ValueError) as exc:
             print(f"error: {exc}", file=sys.stderr)
             return 2
 

@@ -20,6 +20,7 @@ MITRE ATT&CK Navigator.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
 from typing import Iterable
@@ -585,6 +586,8 @@ def map_findings(lines: Iterable[str], *, min_score: int = 1) -> MapResult:
 def map_files(paths: Iterable[str], *, min_score: int = 1) -> MapResult:
     lines: list[str] = []
     for path in paths:
+        if not path or not path.strip():
+            raise ValueError(f"Invalid file path: {path!r}")
         with open(path, "r", encoding="utf-8", errors="replace") as fh:
             lines.extend(fh.readlines())
     return map_findings(lines, min_score=min_score)
@@ -708,3 +711,30 @@ def navigator_layer(result: MapResult, *, name: str = "attackmap layer",
         "showTacticRowBackground": True,
         "hideDisabled": False,
     }
+
+
+# ---------------------------------------------------------------------------
+# Convenience aliases used by the MCP server and external callers
+# ---------------------------------------------------------------------------
+
+def scan(text: str, *, min_score: int = 1) -> MapResult:
+    """Alias for ``map_findings`` that accepts a single block of text.
+
+    Each non-blank, non-comment line in *text* is treated as one finding.
+    Raises ``ValueError`` if *text* is not a string.
+    """
+    if not isinstance(text, str):
+        raise TypeError(f"scan() expects a str, got {type(text).__name__!r}")
+    return map_findings(text.splitlines(), min_score=min_score)
+
+
+def to_json(result: MapResult) -> str:
+    """Serialise a ``MapResult`` to a compact JSON string.
+
+    Raises ``TypeError`` if *result* is not a ``MapResult``.
+    """
+    if not isinstance(result, MapResult):
+        raise TypeError(
+            f"to_json() expects a MapResult, got {type(result).__name__!r}"
+        )
+    return json.dumps(result.as_dict(), indent=2)
